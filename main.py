@@ -1,6 +1,4 @@
 from PIL import Image
-import numpy as np
-import requests
 from random import randint
 import sys
 import yaml
