@@ -1,10 +1,39 @@
 from PIL import Image
 import numpy as np
+import requests
 from random import randint
+import sys
+import yaml
+from rdoclient_py3 import RandomOrgClient
+
 img_array = []
 
 width = 500
 height = 400
+
+
+def random_org_api(method, params, api_key):
+    headers = {
+        'Content-Type': 'application/json-rpc'
+    }
+    params = {
+        'jsonrpc': '2.0',
+        'method': method,
+        'params': {
+            'apiKey': api_key,
+            **params
+        },
+        'id': 1234
+    }
+    print(params)
+    url = 'https://api.random.org/json-rpc/1/invoke'
+    return requests.get(url, headers=headers, params=params)
+
+def random_integer(client, minimum, maximum, api_key):
+    response = client.generate_signed_integers(1000, minimum, maximum)
+    data = response.json()['result']['random']['data']
+    for rnd in data:
+        yield rnd
 
 def brushsize(array, x_index, y_index, size, rgb_tuple):
     """
@@ -58,22 +87,38 @@ def random_position():
     return randint(0, width-1), randint(0, height-1)
 
 def random_color():
-    return randint(0, 255), randint(0, 255), randint(0, 255)
+    r = randint(0, 255)
+    g = randint(0, 255)
+    b = randint(0, 255)
+    alpha = randint(0, 255)
+    return r, g, b, alpha
 
 def random_brush_size():
     return randint(0, 5)
 
-img_array = [(255, 255, 255)] * (width*height)
+def format_number_of_requests(number_of_requests):
+    return "I have {} requests left today".format(number_of_requests)
 
-for _ in range(5000):
-    x, y = random_position()
-    color = random_color()
+def main(arg):
+    conf = yaml.safe_load(open('.env.yaml'))
+    key = conf['key']
 
-    print("X: {} Y: {}".format(x, y))
-    idx = x_and_y_pos_to_array_position(x, y)
-    print("Idx: {} Color: {}".format(idx, color))
-    img_array[idx] = color
-# print(img_array)
-img = Image.new('RGB', (width,height))
-img.putdata(img_array)
-img.save('img.png')
+    img_array = [(255, 255, 255, 255)] * (width*height)
+
+    for _ in range(5000):
+        x, y = random_position()
+        color = random_color()
+
+        print("X: {} Y: {}".format(x, y))
+        idx = x_and_y_pos_to_array_position(x, y)
+        print("Idx: {} Color: {}".format(idx, color))
+        img_array[idx] = color
+
+    r = RandomOrgClient(key)
+    print(r.get_requests_left())
+    img = Image.new('RGBA', (width,height))
+    img.putdata(img_array)
+    img.save('img.png')
+
+if __name__ == '__main__':
+    main(sys.argv)
