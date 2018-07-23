@@ -1,22 +1,17 @@
 from PIL import Image
 import sys
 import yaml
-from rdoclient_py3 import RandomOrgClient
 from src.random_api import *
 
 img_array = []
 
-width = 1920
-height = 1080
-output_file_name = 'img.png'
 
-
-def x_and_y_pos_to_array_position(x_pos, y_pos):
+def x_and_y_pos_to_array_position(x_pos, y_pos, width):
     # https://softwareengineering.stackexchange.com/questions/212808/treating-a-1d-data-structure-as-2d-grid
     return x_pos + width * y_pos
 
 
-def array_position_to_x_and_y(array_pos):
+def array_position_to_x_and_y(array_pos, width):
     # https://softwareengineering.stackexchange.com/questions/212808/treating-a-1d-data-structure-as-2d-grid
     return (array_pos / width), (array_pos % width)
 
@@ -25,7 +20,14 @@ def config():
     print("Loading YAML")
     conf = yaml.safe_load(open('../.env.yaml'))
     print("Done loading YAML")
-    keys = conf['key']
+
+    keys = conf['keys']
+    dims = conf['dimensions']
+
+    width = int(dims.split('x')[0])
+    height = int(dims.split('x')[1])
+
+    output_file_name = conf['filename']
 
     # Initalize an array of width * height with these colors  as standard
     print("Instantiating array")
@@ -37,7 +39,7 @@ def config():
         for key in keys
     ])
 
-    return img_array, clients
+    return img_array, clients, width, height, output_file_name
 
 
 def create_color_pool(clients, number_of_colors):
@@ -73,7 +75,7 @@ def run_iteration(clients, img_array, colors, number_of_colors, number_of_xy_pos
 
 
 def main(arg):
-    img_array, clients = config()
+    img_array, clients, width, height, output_file_name = config()
 
     number_of_xy_positions_to_create = 100
     number_of_colors_to_create = 10
@@ -97,7 +99,7 @@ def main(arg):
     img = Image.new('RGBA', (width, height))
     img.putdata(img_array)
     img.show()
-    # img.save(output_file_name)
+    img.save(output_file_name)
 
 
 if __name__ == '__main__':
