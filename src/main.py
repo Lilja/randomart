@@ -1,7 +1,7 @@
 from PIL import Image
 import sys
 import yaml
-from src.random_api import *
+from random_api import *
 
 img_array = []
 
@@ -18,7 +18,7 @@ def array_position_to_x_and_y(array_pos, width):
 
 def config():
     print("Loading YAML")
-    conf = yaml.safe_load(open('../.env.yaml'))
+    conf = yaml.safe_load(open('.env.yaml'))
     print("Done loading YAML")
 
     keys = conf['keys']
@@ -27,7 +27,10 @@ def config():
     width = int(dims.split('x')[0])
     height = int(dims.split('x')[1])
 
+    print("Setting up a canvas of {} x {}".format(width, height))
+
     output_file_name = conf['filename']
+    print("Saving file as {}".format(output_file_name))
 
     # Initalize an array of width * height with these colors  as standard
     print("Instantiating array")
@@ -54,19 +57,19 @@ def create_color_pool(clients, number_of_colors):
 
 def create_color_pool_order(clients, number_of_colors):
     print("Requesting random color order")
-    color_order = load_random_color_order(clients.get_client(), number_of_colors, number_of_colors)
+    color_order = load_random_color_order(clients.get_client(), number_of_colors, number_of_colors-1)
     print("{} color order loaded.".format(number_of_colors))
     return color_order
 
 
-def run_iteration(clients, img_array, colors, number_of_colors, number_of_xy_positions, total_plots, number_of_runs):
+def run_iteration(clients, img_array, colors, number_of_colors, number_of_xy_positions, total_plots, number_of_runs, width, height):
     color_order = create_color_pool_order(clients, number_of_colors)
 
     for color_idx in color_order:
         color = colors[color_idx]
 
         for x, y in generate_integers(clients.get_client(), number_of_xy_positions, width, height):
-            idx = x_and_y_pos_to_array_position(x, y)
+            idx = x_and_y_pos_to_array_position(x, y, width)
             img_array[idx] = color
             total_plots += number_of_xy_positions
 
@@ -93,7 +96,9 @@ def main(arg):
             number_of_colors_to_create,
             number_of_xy_positions_to_create,
             total_plots,
-            iterator
+            iterator,
+            width,
+            height
         )
 
     img = Image.new('RGBA', (width, height))
