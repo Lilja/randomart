@@ -15,6 +15,7 @@ Optionally:
 
 ## Installation
 * Download the repository
+* Configure either with make or the manual steps
 
 ### Makefile
 * Run `make build`.
@@ -22,7 +23,6 @@ Optionally:
 ### Manual steps
 * Run `./setup.sh` to create the configuration file, `.env.yaml`.
 * Install the dependencies with `virtualenv`, `pip install -r requirements.txt`.
-
 
 ## Api Keys
 Since the api of Random.org is limited to a 1000 requests/day, this script uses multiple clients with multiple api keys that rotates every api-call. Just use one key if you're unsure about it.
