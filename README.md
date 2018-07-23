@@ -2,6 +2,9 @@
 
 Creates an image, from the random values from random.org which is considered "true random" as opposed to the random that exists within the ordinary computer, "psuedo" random.
 
+Example:
+![Example of ouput image](examples/img.png)
+
 ## Requirements
 * `virtualenv`
 * `python 3`
@@ -25,6 +28,10 @@ Optionally:
 Since the api of Random.org is limited to a 1000 requests/day, this script uses multiple clients with multiple api keys that rotates every api-call. Just use one key if you're unsure about it.
 
 Request keys [here](https://api.random.org/api-keys/beta).
+
+
+## Run
+`make run` or `python src/main.py`
 
 ## Example of `.env.yaml`
 ```

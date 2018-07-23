@@ -11,3 +11,6 @@ install:
 
 build: .env.yaml venv install
 
+run: build
+	python src/main.py
+
