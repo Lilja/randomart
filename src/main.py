@@ -36,13 +36,16 @@ def config():
     print("Instantiating array")
     img_array = [(0, 0, 0, 255)] * (width * height)
 
+    iterations = conf['iterations']
+    print("Will run for {} iteration(s)".format(iterations))
+
     print("Instantiating Random.org API clients")
     clients = APIClients([
         RandomOrgClient(key)
         for key in keys
     ])
 
-    return img_array, clients, width, height, output_file_name
+    return img_array, clients, width, height, output_file_name, iterations
 
 
 def create_color_pool(clients, number_of_colors):
@@ -78,7 +81,7 @@ def run_iteration(clients, img_array, colors, number_of_colors, number_of_xy_pos
 
 
 def main(arg):
-    img_array, clients, width, height, output_file_name = config()
+    img_array, clients, width, height, output_file_name, iterations = config()
 
     number_of_xy_positions_to_create = 100
     number_of_colors_to_create = 10

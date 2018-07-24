@@ -7,6 +7,7 @@ keys:
   - api-key-here
 filename: img.png
 dimensions: 1920x1080
+iterations: 5
 EOF
 
 
