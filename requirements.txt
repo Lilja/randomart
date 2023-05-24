@@ -11,6 +11,6 @@ pytest==3.6.3
 pytz==2018.5
 PyYAML==5.4
 rdoclient-py3==2.0.5
-requests==2.20.0
+requests==2.31.0
 six==1.11.0
 urllib3>=1.24.2
